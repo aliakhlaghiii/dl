@@ -3,9 +3,8 @@ from keras.datasets.mnist import load_data
 from matplotlib import pyplot as plt
 
 (x_train, y_train), (x_test, y_test) = load_data()
-print(x_train.shape, x_train.dtype)
-print(y_train.shape, y_train.dtype)
-print(y_train[2])
+print(x_train.shape, x_train.dtype)    # (60000, 28, 28)
+print(y_train.shape, y_train.dtype)    # (60000, )
 
 plt.imshow(x_train[2], cmap='binary') # gray: inverted binary
 plt.show()
@@ -27,9 +26,9 @@ x_test = x_test.reshape((-1,28*28))
 # model
 model = keras.Sequential([
     keras.layers.InputLayer(shape=(28*28,)),
-    keras.layers.Dense(units=64, activation=keras.activations.tanh),
-    keras.layers.Dense(units=32, activation=keras.activations.tanh),
-    keras.layers.Dense(units=16, activation=keras.activations.tanh),
+    keras.layers.Dense(units=64, activation=keras.activations.relu),
+    keras.layers.Dense(units=32, activation=keras.activations.relu),
+    keras.layers.Dense(units=16, activation=keras.activations.relu),
     keras.layers.Dense(units=10, activation=keras.activations.softmax),
 ])
 
@@ -39,7 +38,7 @@ model.summary()
 # fit
 model.compile(
     loss = keras.losses.CategoricalCrossentropy(),
-    optimizer = keras.optimizers.SGD(),
+    optimizer = keras.optimizers.SGD(),   # or Adam
     metrics = [keras.metrics.CategoricalAccuracy()]
 
 )

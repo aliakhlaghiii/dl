@@ -165,7 +165,12 @@ history = model.fit(
 test_loss, test_acc = model.evaluate(test_ds)
 print("Test loss:", test_loss)
 print("Test acc :", test_acc)
-
+'''
+    `test_loss' means the value of **cost function on unseen data (test); If 
+    large means that the model either **predicts with wrong confidence
+    or (like here) a large part of the loss comes from **regularization penalty (L1/L2)
+    , then a large number does not necessarily mean "very bad accuracy".
+'''
 # Plot learning curves to see overfit/underfit trends across epochs
 plt.figure()
 plt.plot(history.history.get("loss", []), label="train_loss")

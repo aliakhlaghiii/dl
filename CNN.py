@@ -6,16 +6,15 @@ from matplotlib import pyplot as plt
 
 SEED = 42
 AUTOTUNE = tf.data.AUTOTUNE
-
 IMG_SIZE = (112, 112)
 BATCH_SIZE = 20
 
 # Download + unzip dataset into a local folder structure (train/ and test/)
-%%bash
+'''%%bash
 set -e
 curl -L https://bioinf.nl/~davelangers/datasets/dogs-vs-cats.zip -o dogs-vs-cats.zip
 unzip -oq dogs-vs-cats.zip
-ls -la dogs-vs-cats
+ls -la dogs-vs-cats'''
 
 # Create train/val from the same train folder using a fixed split + seed; create test separately (no shuffle)
 train_ds = krs.utils.image_dataset_from_directory(
@@ -65,7 +64,6 @@ print("y.dtype =", y.dtype)
 # Display one image; if pixel values are 0..255 in float, rescale to 0..1 to avoid imshow clipping warnings
 img = x[0].numpy()
 img_show = img / 255.0 if img.max() > 1.5 else img
-
 plt.imshow(img_show)
 plt.title(f"y = {int(y[0])}")
 plt.axis("off")
@@ -76,7 +74,7 @@ preproc = krs.Sequential([
     krs.layers.InputLayer(shape=(IMG_SIZE[0], IMG_SIZE[1], 3), name="input"),
     krs.layers.Rescaling(1./255),
     krs.layers.RandomFlip("horizontal"),
-    krs.layers.RandomContrast(0.5),
+    krs.layers.RandomContrast(0.2),
     krs.layers.RandomRotation(0.05),
     krs.layers.RandomZoom(height_factor=(-0.1, 0.1)),
 ], name="preproc")
@@ -105,20 +103,20 @@ model = krs.Sequential([
     krs.layers.MaxPooling2D(pool_size=(2, 2)),
 
     krs.layers.Conv2D(64, (3, 3), activation="relu"),
-    krs.layers.Conv2D(64, (5, 5), activation="relu"),
-    krs.layers.MaxPooling2D(pool_size=(3, 3)),
+    krs.layers.Conv2D(64, (2, 2), activation="relu"),
+    krs.layers.MaxPooling2D(pool_size=(2, 2)),
 
     krs.layers.Flatten(),
     krs.layers.Dropout(0.1),
 
     krs.layers.Dense(
         64,
-        activation="tanh",
+        activation="relu",
         kernel_regularizer=krs.regularizers.L1L2(l1=1e-5, l2=1e-4),
     ),
     krs.layers.Dropout(0.1),
 
-    krs.layers.Dense(16, activation="tanh"),
+    krs.layers.Dense(16, activation="relu"),
     krs.layers.Dense(1, activation="sigmoid"),
 ], name="dogs_vs_cats_cnn")
 
